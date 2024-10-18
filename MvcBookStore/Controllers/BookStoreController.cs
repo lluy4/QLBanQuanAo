@@ -21,7 +21,7 @@ namespace MvcBookStore.Controllers
             return data.SACHes.OrderByDescending(a => a.Ngaycapnhat).Take(count).ToList();
         }
         // GET: BookStore
-        public ActionResult Index(int ? page)
+        public ActionResult Index(int? page)
         {
             //Tao bien quy dinh so san pham tren 1 trang
             int pageSize = 8;
@@ -29,7 +29,7 @@ namespace MvcBookStore.Controllers
             int pageNum = (page ?? 1);
             //Lay nhung quyen sach moi nhat
             var sachmoi = Laysachmoi(16);
-            return View(sachmoi.ToPagedList(pageNum,pageSize));
+            return View(sachmoi.ToPagedList(pageNum, pageSize));
         }
         //Them chu de voi tung muc nav
         public ActionResult Loai()
@@ -43,8 +43,24 @@ namespace MvcBookStore.Controllers
             var nhaxuatban = from nxb in data.NHAXUATBANs select nxb;
             return PartialView(nhaxuatban);
         }
+        //tim kiem
+        public ActionResult Search(string searchString, int? page)
+        {
+            var productList = data.SACHes.OrderByDescending(x => x.Tensach);
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                productList = (IOrderedQueryable<SACH>)productList.Where(x => x.Tensach.Contains(searchString));
+            }
+
+            int pageSize = 10;
+            int pageNumber = (page ?? 1);
+
+            return View("Index", productList.ToPagedList(pageNumber, pageSize));
+        }
+
         //Chia san pham theo chu de
-        public ActionResult SPTheoloai(int id,int ? page)
+        public ActionResult SPTheoloai(int id, int? page)
         {
             //Tao bien quy dinh so san pham tren 1 trang
             int pageSize = 8;
